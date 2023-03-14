@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var placeViewModel: PlaceViewModel
     private lateinit var layer: KmlLayer
+    private lateinit var imagesArray1: Array<Int>
+    private lateinit var imagesArray2: Array<Int>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +48,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
+
+        imagesArray1 = arrayOf(R.drawable.bondi1, R.drawable.cronulla1, R.drawable.manly1, R.drawable.maroubra1)
+        imagesArray2 = arrayOf(R.drawable.bondi2, R.drawable.cronulla2, R.drawable.manly2, R.drawable.maroubra2)
 
         //Load Map
         val mapFragment = supportFragmentManager.findFragmentById(
@@ -67,6 +72,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     @SuppressLint("PotentialBehaviorOverride")
     private fun getPlaces() {
+
+
         placeViewModel = ViewModelProvider(this)[PlaceViewModel::class.java]
 
         //Call PlaceApi from ViewModel
@@ -76,14 +83,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         placeViewModel.placeItemList.observe(this, Observer {
 
             for (item in it) {
-
+                val index = it.indexOf(item)
                 val place = LatLng(item.lat.toDouble(), item.lng.toDouble())
                 val markerIcon = getMarkerIcon(
                     root = findViewById(R.id.root),
+                    markerImg = imagesArray1[index],
                     text = "2")
                 mMap.addMarker(MarkerOptions().position(place).title(item.name).icon(markerIcon))
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(place, 10F))
-                mMap.setInfoWindowAdapter(CustomInfoWindow(applicationContext))
+                mMap.setInfoWindowAdapter(CustomInfoWindow(applicationContext,imagesArray1[index], imagesArray2[index] ))
 
             }
 
@@ -93,8 +101,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    private fun getMarkerIcon(root: ViewGroup, text: String?): BitmapDescriptor? {
-        val markerView = CustomMarkerView(root, text)
+    private fun getMarkerIcon(root: ViewGroup,markerImg: Int, text: String?): BitmapDescriptor? {
+        val markerView = CustomMarkerView(root, markerImg, text)
         markerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
         markerView.layout(0, 0, markerView.measuredWidth, markerView.measuredHeight)
         markerView.isDrawingCacheEnabled = true

@@ -9,6 +9,7 @@ import com.othman.josequaltask.R
 
 class CustomMarkerView(
     root: ViewGroup,
+    img: Int,
     text: String?
 ) : FrameLayout(root.context) {
     private var mImage: ImageView
@@ -20,7 +21,7 @@ class CustomMarkerView(
         mTitle = findViewById(R.id.marker_title)
         measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
         mTitle.text = text
-        mImage.setImageResource(R.drawable.firebase)
+        mImage.setImageResource(img)
 
     }
 }
